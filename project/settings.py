@@ -30,6 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -103,24 +104,65 @@ CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": [
             "heading", "|",
-            "bold", "italic", "underline", "link", "blockQuote", "code", "codeBlock", "|",
-            "bulletedList", "numberedList", "outdent", "indent", "|",
-            "insertTable", "imageUpload", "mediaEmbed", "|",
-            "undo", "redo",
+            "bold", "italic", "underline", "strikethrough", "subscript", "superscript", "removeFormat", "|",
+            "fontFamily", "fontSize", "fontColor", "fontBackgroundColor", "highlight", "|",
+            "alignment", "outdent", "indent", "|",
+            "bulletedList", "numberedList", "todoList", "|",
+            "blockQuote", "code", "codeBlock", "horizontalLine", "|",
+            "link", "mediaEmbed", "insertTable", "imageUpload", "|",
+            "findAndReplace", "specialCharacters", "undo", "redo",
         ],
         "image": {
             "toolbar": [
                 "toggleImageCaption", "imageTextAlternative", "|",
-                "imageStyle:alignLeft", "imageStyle:alignCenter", "imageStyle:alignRight",
-                "imageStyle:side", "imageStyle:inline", "imageStyle:block",
+                "imageStyle:inline", "imageStyle:block", "imageStyle:side", "|",
+                "imageStyle:alignLeft", "imageStyle:alignCenter", "imageStyle:alignRight", "|",
+                "resizeImage",
+            ],
+            "styles": ["inline", "block", "side", "alignLeft", "alignCenter", "alignRight"],
+        },
+        "table": {
+            "contentToolbar": [
+                "tableColumn", "tableRow", "mergeTableCells", "tableProperties", "tableCellProperties",
             ]
         },
-        "table": {"contentToolbar": ["tableColumn", "tableRow", "mergeTableCells"]},
+        "link": {
+            "decorators": {
+                "addTargetToExternalLinks": True,
+                "defaultProtocol": "https://",
+            }
+        },
         "language": "en",
-        "height": 500,
+        "height": 600,
     }
 }
+
+# Allow document types and restrict image types for CKEditor 5 uploads
+# Accept documents and also the allowed image extensions to cover drag/drop or generic upload flows
+CKEDITOR_5_UPLOAD_FILE_TYPES = [
+    ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".csv", ".md",
+    ".png", ".jpg", ".jpeg", ".jpe", ".gif",
+    "png", "jpg", "jpeg", "jpe", "gif",
+    ".PNG", ".JPG", ".JPEG", ".JPE", ".GIF",
+    "PNG", "JPG", "JPEG", "JPE", "GIF",
+]
+# Only PNG, JPG (and variants), and GIF (and variants)
+CKEDITOR_5_UPLOAD_IMAGE_TYPES = [
+    ".png", ".jpg", ".jpeg", ".jpe", ".gif",
+    "png", "jpg", "jpeg", "jpe", "gif",
+    ".PNG", ".JPG", ".JPEG", ".JPE", ".GIF",
+    "PNG", "JPG", "JPEG", "JPE", "GIF",
+]
+
+# Optional: base upload path under MEDIA_ROOT
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
 
 # Auth redirects
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# Use WhiteNoise for efficient static file serving in containers/prod
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}

@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: djangoblog_web
+    env_file:
+      - .env
+    environment:
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: "*"
+      # Optionally override gunicorn
+      # GUNICORN_WORKERS: "4"
+      # GUNICORN_TIMEOUT: "60"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./media:/app/media
+      # Static files are collected into image, but you can persist if you prefer
+      # - ./staticfiles:/app/staticfiles
+    restart: unless-stopped
+

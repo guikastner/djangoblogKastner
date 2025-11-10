@@ -1,4 +1,5 @@
 from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.db.models import Count, Q
@@ -127,6 +128,24 @@ class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         messages.success(self.request, "Post created successfully.")
         response = super().form_valid(form)
         return response
+
+    def get_success_url(self):
+        return reverse("blog:post_detail", kwargs={"slug": self.object.slug})
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        messages.success(self.request, "Post updated successfully.")
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse("blog:post_detail", kwargs={"slug": self.object.slug})

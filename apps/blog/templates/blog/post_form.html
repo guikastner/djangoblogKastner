@@ -1,13 +1,16 @@
 {% extends "blog/base.html" %}
 
-{% block title %}New Post · Django Blog{% endblock %}
+{% block title %}{% if form.instance.pk %}Edit Post{% else %}New Post{% endif %} · Django Blog{% endblock %}
+
+{% block extra_head %}
+  {{ form.media }}
+{% endblock %}
 
 {% block content %}
-  <h2>New Post</h2>
+  <h2>{% if form.instance.pk %}Edit Post{% else %}New Post{% endif %}</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
+    <button type="submit">{% if form.instance.pk %}Update{% else %}Save{% endif %}</button>
   </form>
 {% endblock %}
-
