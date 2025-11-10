@@ -1,0 +1,13 @@
+{% extends "blog/base.html" %}
+
+{% block title %}New Post · Django Blog{% endblock %}
+
+{% block content %}
+  <h2>New Post</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}
+

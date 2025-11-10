@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Categories · Django Blog{% endblock %}
+
+{% block content %}
+  <h2>Categories</h2>
+  {% if categories %}
+    <ul>
+      {% for c in categories %}
+        <li>
+          <a href="{% url 'blog:category_detail' slug=c.slug %}">{{ c.name }}</a>
+          {% if c.posts_count %}<small>({{ c.posts_count }})</small>{% endif %}
+          {% if c.description %}<br><small>{{ c.description }}</small>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No categories yet.</p>
+  {% endif %}
+{% endblock %}
+

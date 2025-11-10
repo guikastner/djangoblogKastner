@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Django Blog{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+      .container { max-width: 900px; margin: 2rem auto; }
+      img { max-width: 100%; height: auto; }
+      pre code { white-space: pre-wrap; }
+    </style>
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1><a href="/" style="text-decoration:none; color:inherit">Django Blog</a></h1>
+        <nav>
+          {% if user.is_authenticated %}
+            <small>
+              Hi, {{ user.username }} ·
+              {% if user.is_staff %}<a href="{% url 'blog:post_create' %}">New Post</a> · {% endif %}
+              <a href="/admin/">Admin</a> ·
+              <a href="/accounts/logout/">Logout</a>
+            </small>
+          {% else %}
+            <small><a href="/accounts/login/">Login</a> · <a href="{% url 'blog:signup' %}">Sign up</a></small>
+          {% endif %}
+        </nav>
+      </header>
+      {% if messages %}
+        <section>
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
+      {% block content %}{% endblock %}
+      <footer style="margin-top: 3rem; font-size: .9rem; color: #666;">
+        <hr />
+        <p>Powered by Django + CKEditor</p>
+      </footer>
+    </main>
+  </body>
+  </html>

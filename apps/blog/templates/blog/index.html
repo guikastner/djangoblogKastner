@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Posts · Django Blog{% endblock %}
+
+{% block content %}
+  {% if categories %}
+    <section>
+      <h3>Categories</h3>
+      <p>
+        {% for c in categories %}
+          <a href="{% url 'blog:category_detail' slug=c.slug %}" style="margin-right:.5rem">{{ c.name }}{% if c.posts_count %} ({{ c.posts_count }}){% endif %}</a>
+        {% empty %}
+          <span>No categories.</span>
+        {% endfor %}
+        <a href="{% url 'blog:categories' %}">View all</a>
+      </p>
+    </section>
+  {% endif %}
+  {% if posts %}
+    <ul>
+      {% for p in posts %}
+        <li>
+          <a href="{% url 'blog:post_detail' slug=p.slug %}">{{ p.title }}</a>
+          {% if p.published_at %}
+            <small>— {{ p.published_at|date:"d M Y, H:i" }}</small>
+          {% endif %}
+          {% if p.summary %}<p>{{ p.summary }}</p>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if is_paginated %}
+      <nav>
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p>No posts yet.</p>
+  {% endif %}
+{% endblock %}

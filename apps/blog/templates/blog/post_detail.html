@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ post.title }} · Django Blog{% endblock %}
+
+{% block content %}
+  <article>
+    <h2>{{ post.title }}</h2>
+    {% if post.published_at %}
+      <p><small>Published {{ post.published_at|date:"d M Y, H:i" }}</small></p>
+    {% endif %}
+    {% if post.cover_image %}
+      <p><img src="{{ post.cover_image.url }}" alt="Cover image" /></p>
+    {% endif %}
+    <div>
+      {{ post.content|safe }}
+    </div>
+  </article>
+
+  <section style="margin-top:2rem">
+    <h3>Comments ({{ comments|length }})</h3>
+    {% if comments %}
+      <ul>
+        {% for c in comments %}
+          <li>
+            <p><strong>{{ c.user.username }}</strong> · <small>{{ c.created_at|date:"d M Y, H:i" }}</small></p>
+            <p>{{ c.body|linebreaks }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No comments yet.</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <h4>Add a comment</h4>
+      <form method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Post comment</button>
+      </form>
+    {% else %}
+      <p><a href="/accounts/login/?next={{ request.path }}">Log in</a> or <a href="{% url 'blog:signup' %}">Sign up</a> to comment.</p>
+    {% endif %}
+  </section>
+{% endblock %}
